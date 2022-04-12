@@ -2,21 +2,23 @@
 [![](https://img.shields.io/pypi/djversions/django-admin-interface?color=0C4B33&logo=django&logoColor=white&label=django)](https://www.djangoproject.com/)
 
 [![](https://img.shields.io/pypi/v/django-admin-interface.svg?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/django-admin-interface/)
-[![](https://pepy.tech/badge/django-admin-interface)](https://pepy.tech/project/django-admin-interface)
+[![](https://pepy.tech/badge/django-admin-interface/month)](https://pepy.tech/project/django-admin-interface)
 [![](https://img.shields.io/github/stars/fabiocaccamo/django-admin-interface?logo=github)](https://github.com/fabiocaccamo/django-admin-interface/)
 [![](https://badges.pufler.dev/visits/fabiocaccamo/django-admin-interface?label=visitors&color=blue)](https://badges.pufler.dev)
 [![](https://img.shields.io/pypi/l/django-admin-interface.svg?color=blue)](https://github.com/fabiocaccamo/django-admin-interface/blob/master/LICENSE.txt)
 
-[![](https://img.shields.io/travis/fabiocaccamo/django-admin-interface?logo=travis&label=build)](https://travis-ci.org/fabiocaccamo/django-admin-interface)
+[![](https://img.shields.io/github/workflow/status/fabiocaccamo/django-admin-interface/Test%20package?label=build&logo=github)](https://github.com/fabiocaccamo/django-admin-interface)
 [![](https://img.shields.io/codecov/c/gh/fabiocaccamo/django-admin-interface?logo=codecov)](https://codecov.io/gh/fabiocaccamo/django-admin-interface)
 [![](https://img.shields.io/codacy/grade/21cb657283c04e70b56fb935277a1ad1?logo=codacy)](https://www.codacy.com/app/fabiocaccamo/django-admin-interface)
 [![](https://img.shields.io/codeclimate/maintainability/fabiocaccamo/django-admin-interface?logo=code-climate)](https://codeclimate.com/github/fabiocaccamo/django-admin-interface/)
-[![](https://requires.io/github/fabiocaccamo/django-admin-interface/requirements.svg?branch=master)](https://requires.io/github/fabiocaccamo/django-admin-interface/requirements/?branch=master)
+[![](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # django-admin-interface
 django-admin-interface is a modern **responsive flat admin interface customizable by the admin itself**.
 
 ![django-admin-interface-preview](https://user-images.githubusercontent.com/1035294/35631521-64b0cab8-06a4-11e8-8f57-c04fdfbb7e8b.gif)
+
+---
 
 ## Features
 - Beautiful default **django-theme**
@@ -26,6 +28,7 @@ django-admin-interface is a modern **responsive flat admin interface customizabl
 - Environment name/marker
 - Language chooser
 - List filter dropdown
+- `NEW` **Foldable apps** *(accordions in the navigation bar)*
 - `NEW` **List filter sticky**
 - `NEW` **Form controls sticky** *(pagination and save/delete buttons)*
 - Compatibility / Style optimizations for:
@@ -36,59 +39,63 @@ django-admin-interface is a modern **responsive flat admin interface customizabl
   - `django-tabbed-admin`
   - `sorl-thumbnail`
 
+---
+
 ## Installation
 - Run `pip install django-admin-interface`
 - Add `admin_interface`, `flat_responsive`, `flat` and `colorfield` to `settings.INSTALLED_APPS` **before** `django.contrib.admin`
 ```python
 INSTALLED_APPS = (
     #...
-    'admin_interface',
-    'flat_responsive', # only if django version < 2.0
-    'flat', # only if django version < 1.9
-    'colorfield',
+    "admin_interface",
+    "flat_responsive", # only if django version < 2.0
+    "flat", # only if django version < 1.9
+    "colorfield",
     #...
-    'django.contrib.admin',
+    "django.contrib.admin",
     #...
 )
 
 # only if django version >= 3.0
-X_FRAME_OPTIONS = 'SAMEORIGIN'
-SILENCED_SYSTEM_CHECKS = ['security.W019']
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 ```
-- Run ``python manage.py migrate``
-- Run ``python manage.py collectstatic``
+- Run `python manage.py migrate`
+- Run `python manage.py collectstatic`
 - Restart your application server
 
 #### Upgrade
 - Run `pip install django-admin-interface --upgrade`
-- Run ``python manage.py migrate`` *(add* ``--fake-initial`` *if you are upgrading from 0.1.0 version)*
-- Run ``python manage.py collectstatic --clear``
+- Run `python manage.py migrate` *(add* `--fake-initial` *if you are upgrading from 0.1.0 version)*
+- Run `python manage.py collectstatic --clear`
 - Restart your application server
+
+---
 
 ## Optional themes
 This package ships with optional themes as fixtures, they can be installed using the [loaddata admin command](https://docs.djangoproject.com/en/1.11/ref/django-admin/#django-admin-loaddata). Optional themes are activated on installation.
 
 ##### [Django](https://www.djangoproject.com/) theme (default):
-Run ``python manage.py loaddata admin_interface_theme_django.json``
+Run `python manage.py loaddata admin_interface_theme_django.json`
 
 ##### [Bootstrap](http://getbootstrap.com/) theme:
-Run ``python manage.py loaddata admin_interface_theme_bootstrap.json``
+Run `python manage.py loaddata admin_interface_theme_bootstrap.json`
 
 ##### [Foundation](http://foundation.zurb.com/) theme:
-Run ``python manage.py loaddata admin_interface_theme_foundation.json``
+Run `python manage.py loaddata admin_interface_theme_foundation.json`
 
 ##### [U.S. Web Design Standards](https://standards.usa.gov/) theme:
-Run ``python manage.py loaddata admin_interface_theme_uswds.json``
+Run `python manage.py loaddata admin_interface_theme_uswds.json`
 
 ### Add more themes
 You can add a theme you've created through the admin to this repository by [sending us a PR](http://makeapullrequest.com/). Here are the steps to follow to add:
 
 1. Export your exact theme as fixture using the `dumpdata` admin command:
-``python manage.py dumpdata admin_interface.Theme --indent 4 -o admin_interface_theme_{{name}}.json --pks=N``
+`python manage.py dumpdata admin_interface.Theme --indent 4 -o admin_interface_theme_{{name}}.json --pks=N`
 
 2. Copy the generated json file into the fixtures folder *(making sure its name starts with* `admin_interface_theme_` *to avoid clashes with fixtures that might be provided by other third party apps)*.
 
-3. Remove the `"pk"` from the fixture and make sure the `active` field is set to `true` *(in this way a theme is automatically activated when installed)*.
+3. Remove the `pk` from the fixture and make sure the `active` field is set to `true` *(in this way a theme is automatically activated when installed)*.
 
 4. Edit the section above to document your theme.
 
@@ -119,6 +126,7 @@ You can add **theme support to existing third-party libraries** using the follow
 - `--admin-interface-related-modal-background-color`
 - `--admin-interface-related-modal-background-opacity`
 
+---
 
 ## Screenshots
 ###### Admin login
@@ -133,10 +141,49 @@ You can add **theme support to existing third-party libraries** using the follow
 ###### Admin theme customization
 ![django-admin-interface_theme_customization](https://cloud.githubusercontent.com/assets/1035294/11240250/7350d942-8df1-11e5-9b28-f2f54c333cdc.gif)
 
+---
+
 ## FAQ
-- #### I already have a custom `base_site.html`, how can I make it work?
+
+### Custom `base-site.html`
+> I already have a custom `base_site.html`, how can I make it work?
 
 You can use [django-apptemplates](https://github.com/bittner/django-apptemplates), then add `{% extends "admin_interface:admin/base_site.html" %}` to your `base_site.html`
+
+### Language Chooser not showing
+> I have enabled the **Language Chooser**, but it is not visible in the admin, what should I do?
+
+You must configure multilanguage `settings` and `urls` correctly:
+```python
+LANGUAGES = (
+    ("en", _("English")),
+    ("it", _("Italiano")),
+    ("fr", _("Française")),
+    # more than one language is expected here
+)
+LANGUAGE_CODE = "en"
+USE_I18N = True
+MIDDLEWARE = [
+    # ...
+    "django.middleware.locale.LocaleMiddleware",
+    # ...
+]
+```
+
+```python
+from django.conf.urls.i18n import i18n_patterns
+from django.contrib import admin
+from django.urls import include, path
+
+# ...
+
+urlpatterns = [
+    path("i18n/", include("django.conf.urls.i18n")),
+]
+urlpatterns += i18n_patterns(path("admin/", admin.site.urls))
+```
+
+---
 
 ## Testing
 ```bash
@@ -151,6 +198,7 @@ git clone https://github.com/fabiocaccamo/django-admin-interface.git src && cd s
 
 # install dependencies
 pip install -r requirements.txt
+pip install -r requirements-test.txt
 
 # run tests
 tox
@@ -160,23 +208,12 @@ python setup.py test
 python -m django test --settings "tests.settings"
 ```
 
+---
+
 ## License
 Released under [MIT License](LICENSE.txt).
 
 ---
-
-## Supporting
-
-I would like to spend more time on this project, especially to improve it and adding new features.
-
-As everyone knows open-source projects takes up a lot of time that is unpaid. :money_with_wings:
-
-If you are using this package in commercial project(s), please consider the idea to become a sponsor or donating once:
-
-- [GitHub Sponsor](https://github.com/sponsors/fabiocaccamo)
-- [PayPal](https://www.paypal.me/fabiocaccamo)
-- BTC: bc1q2t0pv8z3udpyuvfnx5kskhqdad4dcvtfuzmvjw
-- ETH: 0x8B55Fb7798b5A9F797A4455C00821B6e53daca74
 
 ## See also
 
@@ -193,5 +230,7 @@ If you are using this package in commercial project(s), please consider the idea
 - [`python-benedict`](https://github.com/fabiocaccamo/python-benedict) - dict subclass with keylist/keypath support, I/O shortcuts (base64, csv, json, pickle, plist, query-string, toml, xml, yaml) and many utilities. 📘
 
 - [`python-codicefiscale`](https://github.com/fabiocaccamo/python-codicefiscale) - encode/decode Italian fiscal codes - codifica/decodifica del Codice Fiscale. 🇮🇹 💳
+
+- [`python-fontbro`](https://github.com/fabiocaccamo/python-fontbro) - friendly font operations. 🧢
 
 - [`python-fsutil`](https://github.com/fabiocaccamo/python-fsutil) - file-system utilities for lazy devs. 🧟‍♂️

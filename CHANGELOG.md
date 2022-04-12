@@ -4,6 +4,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.19.0](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.19.0) - 2022-03-08
+-  Converted dynamic inline CSS to external static CSS using CSS variables. #157 #93 (thanks to [@Mustafa-Abu-Ghazy](https://github.com/Mustafa-Abu-Ghazy))
+
+## [0.18.7](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.18.7) - 2022-02-24
+-  Removed public disclosures of the lib's version. #154 (thanks to [@mintyPT](https://github.com/mintyPT))
+-  Reformatted code with **Black**.
+
+## [0.18.6](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.18.6) - 2022-02-04
+-  Added polish (`pl`) localization by [paduszyk](https://github.com/paduszyk). #152
+-  Fixed login logo `max-width` and title `color`.
+
+## [0.18.5](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.18.5) - 2022-01-21
+-  Added portuguese brazil (`pt_BR`) localization by [leandromsd](https://github.com/leandromsd). #149
+-  Fixed body scroll reset to top when opening related modal. #150
+
+## [0.18.4](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.18.4) - 2022-01-05
+-  Added official django 4.0 support.
+-  Added link to admin home page on logo and title. #147
+-  Fixed collapsed inlines rounded bottom borders.
+-  Fixed missing comma in tests settings `MIDDLEWARE_CLASSES`. #145
+
+## [0.18.3](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.18.3) - 2021-12-07
+-  Added official python 3.10 support.
+-  Replaced travis with GitHub action workflow. #142
+-  Fixed `check_installed_apps` checks.
+-  Fixed django default appconfig deprecation warning. #141
+
+## [0.18.2](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.18.2) - 2021-10-25
+-  Fixed migration error.
+
+## [0.18.1](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.18.1) - 2021-10-25
+-  Removed wrong migration.
+
+## [0.18.0](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.18.0) - 2021-10-24
+-  Added foldable apps support. #117
+-  Removed `css` field from `Theme` model.
+
+## [0.17.3](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.17.3) - 2021-10-12
+-  Fixed `FileExtensionValidator` `TypeError` on django < 1.11.
+
+## [0.17.2](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.17.2) - 2021-10-08
+-  Fixed `FileExtensionValidator` `TypeError` on django < 1.11.
+
+## [0.17.1](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.17.1) - 2021-09-24
+-  Fixed `TemplateDoesNotExist` error on `django==4.0.a1` removing checking condition for `colorfield` package. #134
+-  Fixed favicon fetching incompatible with `django-storages` `S3`. #128
+
+## [0.17.0](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.17.0) - 2021-09-16
+-  Added `logo_max_width` and `logo_max_height`. #127
+
+## [0.16.4](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.16.4) - 2021-09-04
+-  Fixed `0020_module_selected_colors` migration for multiple dbs. #132
+-  Fixed sticky pagination `width` and `border-bottom`.
+-  Fixed inlines vertical overlow.
+-  Improved header elements vertical alignment.
+
 ## [0.16.3](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.16.3) - 2021-04-26
 -  Added `compat` module.
 -  Added missing `0021_file_extension_validator` migration. #126
