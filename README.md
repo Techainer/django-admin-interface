@@ -3,11 +3,11 @@
 
 [![](https://img.shields.io/pypi/v/django-admin-interface.svg?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/django-admin-interface/)
 [![](https://pepy.tech/badge/django-admin-interface/month)](https://pepy.tech/project/django-admin-interface)
-[![](https://img.shields.io/github/stars/fabiocaccamo/django-admin-interface?logo=github)](https://github.com/fabiocaccamo/django-admin-interface/)
-[![](https://badges.pufler.dev/visits/fabiocaccamo/django-admin-interface?label=visitors&color=blue)](https://badges.pufler.dev)
-[![](https://img.shields.io/pypi/l/django-admin-interface.svg?color=blue)](https://github.com/fabiocaccamo/django-admin-interface/blob/master/LICENSE.txt)
+[![](https://img.shields.io/github/stars/fabiocaccamo/django-admin-interface?logo=github)](https://github.com/fabiocaccamo/django-admin-interface/stargazers)
+[![](https://img.shields.io/pypi/l/django-admin-interface.svg?color=blue)](https://github.com/fabiocaccamo/django-admin-interface/blob/main/LICENSE.txt)
 
-[![](https://img.shields.io/github/workflow/status/fabiocaccamo/django-admin-interface/Test%20package?label=build&logo=github)](https://github.com/fabiocaccamo/django-admin-interface)
+[![](https://results.pre-commit.ci/badge/github/fabiocaccamo/django-admin-interface/main.svg)](https://results.pre-commit.ci/latest/github/fabiocaccamo/django-admin-interface/main)
+[![](https://img.shields.io/github/actions/workflow/status/fabiocaccamo/django-admin-interface/test-package.yml?branch=main&label=build&logo=github)](https://github.com/fabiocaccamo/django-admin-interface)
 [![](https://img.shields.io/codecov/c/gh/fabiocaccamo/django-admin-interface?logo=codecov)](https://codecov.io/gh/fabiocaccamo/django-admin-interface)
 [![](https://img.shields.io/codacy/grade/21cb657283c04e70b56fb935277a1ad1?logo=codacy)](https://www.codacy.com/app/fabiocaccamo/django-admin-interface)
 [![](https://img.shields.io/codeclimate/maintainability/fabiocaccamo/django-admin-interface?logo=code-climate)](https://codeclimate.com/github/fabiocaccamo/django-admin-interface/)
@@ -18,8 +18,6 @@ django-admin-interface is a modern **responsive flat admin interface customizabl
 
 ![django-admin-interface-preview](https://user-images.githubusercontent.com/1035294/35631521-64b0cab8-06a4-11e8-8f57-c04fdfbb7e8b.gif)
 
----
-
 ## Features
 - Beautiful default **django-theme**
 - Themes management and customization *(you can **customize admin title, logo and colors**)*
@@ -27,51 +25,61 @@ django-admin-interface is a modern **responsive flat admin interface customizabl
 - Related modal *(instead of the old popup window)*
 - Environment name/marker
 - Language chooser
+- Foldable apps *(accordions in the navigation bar)*
+- [Collapsible fieldsets](https://docs.djangoproject.com/en/4.0/ref/contrib/admin/#django.contrib.admin.ModelAdmin.fieldsets) can have their initial state expanded instead of collapsed
+- `NEW` Collapsible inlines
+- `NEW` Tabbed fieldsets and inlines
+- `NEW` List filter removal links
+- `NEW` List filter highlight selected options
 - List filter dropdown
-- `NEW` **Foldable apps** *(accordions in the navigation bar)*
-- `NEW` **List filter sticky**
-- `NEW` **Form controls sticky** *(pagination and save/delete buttons)*
-- Compatibility / Style optimizations for:
+- List filter sticky
+- Form controls sticky *(pagination and save/delete buttons)*
+- Compatibility / style optimizations for:
   - `django-ckeditor`
   - `django-dynamic-raw-id`
   - `django-json-widget`
   - `django-modeltranslation`
-  - `django-tabbed-admin`
+  - `django-rangefilter`
   - `django-streamfield`
+  - `django-tabbed-admin`
   - `sorl-thumbnail`
-
----
+- Translated in many languages: `de`, `es`, `fa`, `fr`, `it`, `pl`, `pt_BR`, `tr`
 
 ## Installation
 - Run `pip install django-admin-interface`
-- Add `admin_interface`, `flat_responsive`, `flat` and `colorfield` to `settings.INSTALLED_APPS` **before** `django.contrib.admin`
+- Add `admin_interface` and `colorfield` to `settings.INSTALLED_APPS` **before** `django.contrib.admin`
 ```python
 INSTALLED_APPS = (
     #...
     "admin_interface",
-    "flat_responsive", # only if django version < 2.0
-    "flat", # only if django version < 1.9
     "colorfield",
     #...
     "django.contrib.admin",
     #...
 )
 
-# only if django version >= 3.0
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SILENCED_SYSTEM_CHECKS = ["security.W019"]
 ```
 - Run `python manage.py migrate`
-- Run `python manage.py collectstatic`
-- Restart your application server
-
-#### Upgrade
-- Run `pip install django-admin-interface --upgrade`
-- Run `python manage.py migrate` *(add* `--fake-initial` *if you are upgrading from 0.1.0 version)*
 - Run `python manage.py collectstatic --clear`
 - Restart your application server
 
----
+> **Warning** - if you want use modals instead of popup windows, ensure to add `X_FRAME_OPTIONS = "SAMEORIGIN"` setting.
+
+### Optional features
+To make a fieldset start expanded with a `Hide` button to collapse, add the class `"expanded"` to its classes:
+```python
+class MyModelAdmin(admin.ModelAdmin):
+    # ...
+    fieldsets = [
+        ("Section title", {
+            "classes": ("collapse", "expanded"),
+            "fields": (...),
+        }),
+    ]
+    # ...
+```
 
 ## Optional themes
 This package ships with optional themes as fixtures, they can be installed using the [loaddata admin command](https://docs.djangoproject.com/en/1.11/ref/django-admin/#django-admin-loaddata). Optional themes are activated on installation.
@@ -129,6 +137,7 @@ You can add **theme support to existing third-party libraries** using the follow
 - `--admin-interface-module-link-hover-color`
 - `--admin-interface-generic-link-color`
 - `--admin-interface-generic-link-hover-color`
+- `--admin-interface-generic-link-active-color`
 
 #### Buttons
 - `--admin-interface-save-button-background-color`
@@ -144,8 +153,6 @@ You can add **theme support to existing third-party libraries** using the follow
 - `--admin-interface-related-modal-border-radius`
 - `--admin-interface-related-modal-close-button-display`
 
----
-
 ## Screenshots
 ###### Admin login
 ![django-admin-interface_login](https://cloud.githubusercontent.com/assets/1035294/11240233/55c8d4ba-8df1-11e5-9568-00fdc987ede8.gif)
@@ -159,7 +166,21 @@ You can add **theme support to existing third-party libraries** using the follow
 ###### Admin theme customization
 ![django-admin-interface_theme_customization](https://cloud.githubusercontent.com/assets/1035294/11240250/7350d942-8df1-11e5-9b28-f2f54c333cdc.gif)
 
----
+## Localization
+At the moment, this package has been translated into the following languages: `de`, `es`, `fa`, `fr`, `it`, `pl`, `pt_BR`, `tr`.
+
+### Translate into another language
+
+- Run `python -m django makemessages --ignore ".tox" --ignore "venv" --add-location "file" --extension "html,py" --locale "it"` *(example for Italian localization)*
+
+- Update translations in `admin_interface/locale/it/LC_MESSAGES/django.po`
+
+- Run `python -m django compilemessages --ignore ".tox" --ignore "venv"`
+
+### Update translations
+
+If you do some changes to the project, remember to update translations, because if the translations files are not up-to-date, the `lint` step in the CI will fail:
+- Run `tox -e translations`
 
 ## FAQ
 
@@ -176,7 +197,7 @@ You must configure multilanguage `settings` and `urls` correctly:
 LANGUAGES = (
     ("en", _("English")),
     ("it", _("Italiano")),
-    ("fr", _("Française")),
+    ("fr", _("Français")),
     # more than one language is expected here
 )
 LANGUAGE_CODE = "en"
@@ -201,8 +222,6 @@ urlpatterns = [
 urlpatterns += i18n_patterns(path("admin/", admin.site.urls))
 ```
 
----
-
 ## Testing
 ```bash
 # clone repository
@@ -217,15 +236,25 @@ python -m pip install --upgrade pip
 # install requirements
 pip install -r requirements.txt -r requirements-test.txt
 
+# install pre-commit to run formatters and linters
+pre-commit install --install-hooks
+
 # run tests
 tox
 # or
-python setup.py test
+python runtests.py
 # or
 python -m django test --settings "tests.settings"
 ```
 
----
+## Contributing
+Contributions are always welcome, please follow these steps for submitting good quality PRs:
+
+- :exclamation: **Open an issue**, please don't submit any PR that doesn't refer to an existing issue.
+- :computer: **Work on changes**, changes should *preferably* be covered by tests to avoid regressions in the future.
+- :globe_with_meridians: **Update the translations** files.
+- :test_tube: **Run tests** ensuring that there are no errors.
+- :inbox_tray: **Submit a pull-request** and mark it as **"Ready for review"** only if it passes the `CI`.
 
 ## License
 Released under [MIT License](LICENSE.txt).

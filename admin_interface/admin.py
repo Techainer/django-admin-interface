@@ -1,13 +1,11 @@
-# -*- coding: utf-8 -*-
+from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
-from admin_interface.compat import gettext_lazy as _
 from admin_interface.models import Theme
 
-from django.contrib import admin
 
-
+@admin.register(Theme)
 class ThemeAdmin(admin.ModelAdmin):
-
     list_display = (
         "name",
         "active",
@@ -45,6 +43,7 @@ class ThemeAdmin(admin.ModelAdmin):
                 "classes": ("wide",),
                 "fields": (
                     "language_chooser_active",
+                    "language_chooser_control",
                     "language_chooser_display",
                 ),
             },
@@ -108,6 +107,7 @@ class ThemeAdmin(admin.ModelAdmin):
                 "fields": (
                     "css_generic_link_color",
                     "css_generic_link_hover_color",
+                    "css_generic_link_active_color",
                 ),
             },
         ),
@@ -133,7 +133,13 @@ class ThemeAdmin(admin.ModelAdmin):
                 ),
             },
         ),
-        (_("Navigation Bar"), {"classes": ("wide",), "fields": ("foldable_apps",)}),
+        (
+            _("Navigation Bar"),
+            {
+                "classes": ("wide",),
+                "fields": ("foldable_apps",),
+            },
+        ),
         (
             _("Related Modal"),
             {
@@ -162,18 +168,42 @@ class ThemeAdmin(admin.ModelAdmin):
             {
                 "classes": ("wide",),
                 "fields": (
+                    "list_filter_highlight",
                     "list_filter_dropdown",
                     "list_filter_sticky",
+                    "list_filter_removal_links",
+                ),
+            },
+        ),
+        (
+            _("Change Form"),
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "show_fieldsets_as_tabs",
+                    "show_inlines_as_tabs",
+                ),
+            },
+        ),
+        (
+            _("Inlines"),
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "collapsible_stacked_inlines",
+                    "collapsible_stacked_inlines_collapsed",
+                    "collapsible_tabular_inlines",
+                    "collapsible_tabular_inlines_collapsed",
                 ),
             },
         ),
         (
             _("Recent Actions"),
-            {"classes": ("wide",), "fields": ("recent_actions_visible",)},
+            {
+                "classes": ("wide",),
+                "fields": ("recent_actions_visible",),
+            },
         ),
     )
 
     save_on_top = True
-
-
-admin.site.register(Theme, ThemeAdmin)

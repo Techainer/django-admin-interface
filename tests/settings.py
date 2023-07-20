@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
-import django
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -17,17 +12,6 @@ INSTALLED_APPS = [
     "colorfield",
 ]
 
-if django.VERSION < (1, 9):
-    # ONLY if django version < 1.9
-    INSTALLED_APPS += [
-        "flat",
-    ]
-
-if django.VERSION < (2, 0):
-    # ONLY if django version < 2.0
-    INSTALLED_APPS += [
-        "flat_responsive",
-    ]
 
 INSTALLED_APPS += [
     "django.contrib.admin",
@@ -37,20 +21,12 @@ INSTALLED_APPS += [
     "django.contrib.sessions",
 ]
 
-if django.VERSION < (2, 0):
-    MIDDLEWARE_CLASSES = [
-        "django.contrib.auth.middleware.AuthenticationMiddleware",
-        "django.contrib.messages.middleware.MessageMiddleware",
-        "django.contrib.sessions.middleware.SessionMiddleware",
-        "django.middleware.common.CommonMiddleware",
-    ]
-else:
-    MIDDLEWARE = [
-        "django.contrib.auth.middleware.AuthenticationMiddleware",
-        "django.contrib.messages.middleware.MessageMiddleware",
-        "django.contrib.sessions.middleware.SessionMiddleware",
-        "django.middleware.common.CommonMiddleware",
-    ]
+MIDDLEWARE = [
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+]
 
 TEMPLATES = [
     {
@@ -89,6 +65,14 @@ database_config = {
         "HOST": "",
         "PORT": "",
     },
+    "postgres_replica": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "admin_interface_2",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "",
+        "PORT": "",
+    },
 }
 
 github_workflow = os.environ.get("GITHUB_WORKFLOW")
@@ -96,23 +80,37 @@ if github_workflow:
     database_config["postgres"]["NAME"] = "postgres"
     database_config["postgres"]["HOST"] = "127.0.0.1"
     database_config["postgres"]["PORT"] = "5432"
+    database_config["postgres_replica"]["HOST"] = "127.0.0.1"
+    database_config["postgres_replica"]["PORT"] = "5432"
+
+replica_engine = (
+    "postgres_replica" if database_engine == "postgres" else database_engine
+)
 
 DATABASES = {
     "default": database_config.get(database_engine),
+    "replica": database_config.get(replica_engine),
 }
+
+
+DATABASE_ROUTERS = ["tests.routers.DatabaseAppsRouter"]
 
 USE_I18N = True
 LANGUAGES = (
-    (
-        "en",
-        "English",
-    ),
-    (
-        "it",
-        "Italian",
-    ),
+    ("de", "Deutsch"),
+    ("en", "English"),
+    ("es", "Español"),
+    ("fa", "Farsi"),
+    ("fr", "Français"),
+    ("it", "Italiano"),
+    ("pl", "Polski"),
+    ("pt-BR", "Português"),
+    ("ru", "Русский"),
+    ("tr", "Türk"),
 )
 LANGUAGE_CODE = "en"
+
+LOCALE_PATHS = (os.path.join(BASE_DIR, "admin_interface/locale/"),)
 
 ROOT_URLCONF = "tests.urls"
 

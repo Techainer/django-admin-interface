@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import colorfield.fields
-
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("admin_interface", "0005_add_recent_actions_visible"),
     ]
@@ -149,7 +143,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="theme",
             name="css_module_rounded_corners",
-            field=models.BooleanField(default=True, verbose_name="rounded corners"),
+            field=models.BooleanField(
+                default=True,
+                verbose_name="rounded corners",
+            ),
         ),
         migrations.AlterField(
             model_name="theme",
@@ -198,22 +195,34 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="theme",
             name="list_filter_dropdown",
-            field=models.BooleanField(default=False, verbose_name="use dropdown"),
+            field=models.BooleanField(
+                default=False,
+                verbose_name="use dropdown",
+            ),
         ),
         migrations.AlterField(
             model_name="theme",
             name="logo_visible",
-            field=models.BooleanField(default=True, verbose_name="visible"),
+            field=models.BooleanField(
+                default=True,
+                verbose_name="visible",
+            ),
         ),
         migrations.AlterField(
             model_name="theme",
             name="name",
-            field=models.CharField(default="Django", max_length=50),
+            field=models.CharField(
+                default="Django",
+                max_length=50,
+            ),
         ),
         migrations.AlterField(
             model_name="theme",
             name="related_modal_active",
-            field=models.BooleanField(default=True, verbose_name="active"),
+            field=models.BooleanField(
+                default=True,
+                verbose_name="active",
+            ),
         ),
         migrations.AlterField(
             model_name="theme",
@@ -249,13 +258,18 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="theme",
             name="related_modal_rounded_corners",
-            field=models.BooleanField(default=True, verbose_name="rounded corners"),
+            field=models.BooleanField(
+                default=True,
+                verbose_name="rounded corners",
+            ),
         ),
         migrations.AlterField(
             model_name="theme",
             name="title",
             field=models.CharField(
-                blank=True, default="Django administration", max_length=50
+                blank=True,
+                default="Django administration",
+                max_length=50,
             ),
         ),
         migrations.AlterField(
@@ -272,6 +286,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="theme",
             name="title_visible",
-            field=models.BooleanField(default=True, verbose_name="visible"),
+            field=models.BooleanField(
+                default=True,
+                verbose_name="visible",
+            ),
         ),
     ]

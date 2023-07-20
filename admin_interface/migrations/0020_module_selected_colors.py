@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
+import colorfield.fields
 from django.db import migrations
 from django.db.models import F
-
-import colorfield.fields
 
 
 def default_link_selected(apps, schema_editor):
@@ -17,7 +12,6 @@ def default_link_selected(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("admin_interface", "0019_add_form_sticky"),
     ]

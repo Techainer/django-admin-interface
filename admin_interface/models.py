@@ -1,60 +1,26 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
-from admin_interface.cache import del_cached_active_theme
-from admin_interface.compat import FileExtensionValidator, force_str, gettext_lazy as _
-
 from colorfield.fields import ColorField
-
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models.signals import post_delete, post_save, pre_save
+from django.dispatch import receiver
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 
-from six import python_2_unicode_compatible
+from .cache import del_cached_active_theme
 
 
-@python_2_unicode_compatible
-class Theme(models.Model):
-    @staticmethod
-    def post_migrate_handler(**kwargs):
-        del_cached_active_theme()
-        Theme.get_active_theme()
-
-    @staticmethod
-    def post_delete_handler(**kwargs):
-        del_cached_active_theme()
-        Theme.get_active_theme()
-
-    @staticmethod
-    def post_save_handler(instance, **kwargs):
-        del_cached_active_theme()
-        if instance.active:
-            Theme.objects.exclude(pk=instance.pk).update(active=False)
-        Theme.get_active_theme()
-
-    @staticmethod
-    def pre_save_handler(instance, **kwargs):
-        if instance.pk is None:
-            try:
-                obj = Theme.objects.get(name=instance.name)
-                if obj:
-                    instance.pk = obj.pk
-            except Theme.DoesNotExist:
-                pass
-
-    @staticmethod
-    def get_active_theme():
-        objs_manager = Theme.objects
-        objs_active_qs = objs_manager.filter(active=True)
+class ThemeQuerySet(models.QuerySet):
+    def get_active(self):
+        objs_active_qs = self.filter(active=True)
         objs_active_ls = list(objs_active_qs)
         objs_active_count = len(objs_active_ls)
 
         if objs_active_count == 0:
-            obj = objs_manager.all().first()
+            obj = self.all().first()
             if obj:
                 obj.set_active()
             else:
-                obj = objs_manager.create()
+                obj = self.create()
 
         elif objs_active_count == 1:
             obj = objs_active_ls[0]
@@ -65,10 +31,18 @@ class Theme(models.Model):
 
         return obj
 
+
+class Theme(models.Model):
     name = models.CharField(
-        unique=True, max_length=50, default="Django", verbose_name=_("name")
+        unique=True,
+        max_length=50,
+        default="Django",
+        verbose_name=_("name"),
     )
-    active = models.BooleanField(default=True, verbose_name=_("active"))
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_("active"),
+    )
 
     title = models.CharField(
         max_length=50,
@@ -83,7 +57,10 @@ class Theme(models.Model):
         max_length=10,
         verbose_name=_("color"),
     )
-    title_visible = models.BooleanField(default=True, verbose_name=_("visible"))
+    title_visible = models.BooleanField(
+        default=True,
+        verbose_name=_("visible"),
+    )
 
     logo = models.FileField(
         upload_to="admin-interface/logo/",
@@ -104,12 +81,19 @@ class Theme(models.Model):
         verbose_name=_("color"),
     )
     logo_max_width = models.PositiveSmallIntegerField(
-        blank=True, default=400, verbose_name=_("max width")
+        blank=True,
+        default=400,
+        verbose_name=_("max width"),
     )
     logo_max_height = models.PositiveSmallIntegerField(
-        blank=True, default=100, verbose_name=_("max height")
+        blank=True,
+        default=100,
+        verbose_name=_("max height"),
     )
-    logo_visible = models.BooleanField(default=True, verbose_name=_("visible"))
+    logo_visible = models.BooleanField(
+        default=True,
+        verbose_name=_("visible"),
+    )
 
     favicon = models.FileField(
         upload_to="admin-interface/favicon/",
@@ -123,25 +107,43 @@ class Theme(models.Model):
         verbose_name=_("favicon"),
     )
 
-    env_name = models.CharField(blank=True, max_length=50, verbose_name=_("name"))
+    env_name = models.CharField(
+        blank=True,
+        max_length=50,
+        verbose_name=_("name"),
+    )
     env_color = ColorField(
         blank=True,
         default="#E74C3C",
         help_text=_(
-            "(red: #E74C3C, orange: #E67E22, yellow: #F1C40F, green: #2ECC71, blue: #3498DB)"
+            "(red: #E74C3C, orange: #E67E22, yellow: #F1C40F, "
+            "green: #2ECC71, blue: #3498DB)"
         ),
         max_length=10,
         verbose_name=_("color"),
     )
     env_visible_in_header = models.BooleanField(
-        default=True, verbose_name=_("visible in header (marker and name)")
+        default=True,
+        verbose_name=_("visible in header (marker and name)"),
     )
     env_visible_in_favicon = models.BooleanField(
-        default=True, verbose_name=_("visible in favicon (marker)")
+        default=True,
+        verbose_name=_("visible in favicon (marker)"),
     )
 
     language_chooser_active = models.BooleanField(
-        default=True, verbose_name=_("active")
+        default=True,
+        verbose_name=_("active"),
+    )
+    language_chooser_control_choices = (
+        ("default-select", _("Default Select")),
+        ("minimal-select", _("Minimal Select")),
+    )
+    language_chooser_control = models.CharField(
+        max_length=20,
+        choices=language_chooser_control_choices,
+        default="default-select",
+        verbose_name=_("control"),
     )
     language_chooser_display_choices = (
         ("code", _("code")),
@@ -226,7 +228,8 @@ class Theme(models.Model):
         verbose_name=_("link hover color"),
     )
     css_module_rounded_corners = models.BooleanField(
-        default=True, verbose_name=_("rounded corners")
+        default=True,
+        verbose_name=_("rounded corners"),
     )
 
     css_generic_link_color = ColorField(
@@ -242,6 +245,13 @@ class Theme(models.Model):
         help_text="#156641",
         max_length=10,
         verbose_name=_("link hover color"),
+    )
+    css_generic_link_active_color = ColorField(
+        blank=True,
+        default="#29B864",
+        help_text="#29B864",
+        max_length=10,
+        verbose_name=_("link active color"),
     )
 
     css_save_button_background_color = ColorField(
@@ -288,7 +298,10 @@ class Theme(models.Model):
         verbose_name=_("text color"),
     )
 
-    related_modal_active = models.BooleanField(default=True, verbose_name=_("active"))
+    related_modal_active = models.BooleanField(
+        default=True,
+        verbose_name=_("active"),
+    )
     related_modal_background_color = ColorField(
         blank=True,
         default="#000000",
@@ -315,31 +328,78 @@ class Theme(models.Model):
         verbose_name=_("background opacity"),
     )
     related_modal_rounded_corners = models.BooleanField(
-        default=True, verbose_name=_("rounded corners")
+        default=True,
+        verbose_name=_("rounded corners"),
     )
     related_modal_close_button_visible = models.BooleanField(
-        default=True, verbose_name=_("close button visible")
+        default=True,
+        verbose_name=_("close button visible"),
     )
 
+    list_filter_highlight = models.BooleanField(
+        default=True,
+        verbose_name=_("highlight active"),
+    )
     list_filter_dropdown = models.BooleanField(
-        default=True, verbose_name=_("use dropdown")
+        default=True,
+        verbose_name=_("use dropdown"),
     )
     list_filter_sticky = models.BooleanField(
-        default=True, verbose_name=_("sticky position")
+        default=True,
+        verbose_name=_("sticky position"),
+    )
+    list_filter_removal_links = models.BooleanField(
+        default=False,
+        verbose_name=_("quick remove links for active filters at top of sidebar"),
     )
 
-    foldable_apps = models.BooleanField(default=True, verbose_name=_("foldable apps"))
+    foldable_apps = models.BooleanField(
+        default=True,
+        verbose_name=_("foldable apps"),
+    )
+
+    show_fieldsets_as_tabs = models.BooleanField(
+        default=False,
+        verbose_name=_("fieldsets as tabs"),
+    )
+
+    show_inlines_as_tabs = models.BooleanField(
+        default=False,
+        verbose_name=_("inlines as tabs"),
+    )
+
+    collapsible_stacked_inlines = models.BooleanField(
+        default=False,
+        verbose_name=_("collapsible stacked inlines"),
+    )
+    collapsible_stacked_inlines_collapsed = models.BooleanField(
+        default=True,
+        verbose_name=_("collapsible stacked inlines collapsed"),
+    )
+    collapsible_tabular_inlines = models.BooleanField(
+        default=False,
+        verbose_name=_("collapsible tabular inlines"),
+    )
+    collapsible_tabular_inlines_collapsed = models.BooleanField(
+        default=True,
+        verbose_name=_("collapsible tabular inlines collapsed"),
+    )
 
     recent_actions_visible = models.BooleanField(
-        default=True, verbose_name=_("visible")
+        default=True,
+        verbose_name=_("visible"),
     )
 
     form_submit_sticky = models.BooleanField(
-        default=False, verbose_name=_("sticky submit")
+        default=False,
+        verbose_name=_("sticky submit"),
     )
     form_pagination_sticky = models.BooleanField(
-        default=False, verbose_name=_("sticky pagination")
+        default=False,
+        verbose_name=_("sticky pagination"),
     )
+
+    objects = ThemeQuerySet.as_manager()
 
     def set_active(self):
         self.active = True
@@ -347,7 +407,6 @@ class Theme(models.Model):
 
     class Meta:
         app_label = "admin_interface"
-
         verbose_name = _("Theme")
         verbose_name_plural = _("Themes")
 
@@ -355,6 +414,25 @@ class Theme(models.Model):
         return force_str(self.name)
 
 
-post_delete.connect(Theme.post_delete_handler, sender=Theme)
-post_save.connect(Theme.post_save_handler, sender=Theme)
-pre_save.connect(Theme.pre_save_handler, sender=Theme)
+@receiver(post_delete, sender=Theme)
+def post_delete_handler(sender, instance, **kwargs):
+    del_cached_active_theme()
+    Theme.objects.get_active()
+
+
+@receiver(post_save, sender=Theme)
+def post_save_handler(sender, instance, **kwargs):
+    del_cached_active_theme()
+    if instance.active:
+        Theme.objects.exclude(pk=instance.pk).update(active=False)
+    Theme.objects.get_active()
+
+
+@receiver(pre_save, sender=Theme)
+def pre_save_handler(sender, instance, **kwargs):
+    if instance.pk is None:
+        try:
+            obj = Theme.objects.get(name=instance.name)
+            instance.pk = obj.pk
+        except Theme.DoesNotExist:
+            pass

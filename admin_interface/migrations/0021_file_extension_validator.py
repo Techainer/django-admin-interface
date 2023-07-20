@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
-from admin_interface.compat import FileExtensionValidator
-
+from django.core.validators import FileExtensionValidator
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("admin_interface", "0020_module_selected_colors"),
     ]

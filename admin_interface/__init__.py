@@ -1,4 +1,17 @@
-import django
+from admin_interface.metadata import (
+    __author__,
+    __copyright__,
+    __description__,
+    __license__,
+    __title__,
+    __version__,
+)
 
-if django.VERSION < (3, 2):
-    default_app_config = "admin_interface.apps.AdminInterfaceConfig"
+__all__ = [
+    "__author__",
+    "__copyright__",
+    "__description__",
+    "__license__",
+    "__title__",
+    "__version__",
+]

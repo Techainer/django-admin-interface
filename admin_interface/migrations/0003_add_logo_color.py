@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import colorfield.fields
-
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("admin_interface", "0002_add_related_modal"),
     ]

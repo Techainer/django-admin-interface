@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -16,7 +12,7 @@ class AdminInterfaceFixturesTestCase(TestCase):
         pass
 
     def __load_theme(self, theme_name):
-        call_command("loaddata", "admin_interface_theme_%s.json" % (theme_name,))
+        call_command("loaddata", f"admin_interface_theme_{theme_name}.json")
 
     def test_import_initial_data(self):
         call_command("loaddata", "initial_data.json")
@@ -42,10 +38,10 @@ class AdminInterfaceFixturesTestCase(TestCase):
         self.assertEqual(Theme.objects.count(), 2)
 
     def test_import_override(self):
-        obj1 = Theme.get_active_theme()
+        obj1 = Theme.objects.get_active()
         obj1.title = "Custom 1"
         obj1.save()
         self.__load_theme("django")
-        obj2 = Theme.get_active_theme()
+        obj2 = Theme.objects.get_active()
         self.assertEqual(obj1.pk, obj2.pk)
         self.assertTrue(obj1.title != obj2.title)
