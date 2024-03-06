@@ -3,7 +3,7 @@
 
 [![](https://img.shields.io/pypi/v/django-admin-interface.svg?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/django-admin-interface/)
 [![](https://static.pepy.tech/badge/django-admin-interface/month)](https://pepy.tech/project/django-admin-interface)
-[![](https://img.shields.io/github/stars/fabiocaccamo/django-admin-interface?logo=github)](https://github.com/fabiocaccamo/django-admin-interface/stargazers)
+[![](https://img.shields.io/github/stars/fabiocaccamo/django-admin-interface?logo=github&style=flat)](https://github.com/fabiocaccamo/django-admin-interface/stargazers)
 [![](https://img.shields.io/pypi/l/django-admin-interface.svg?color=blue)](https://github.com/fabiocaccamo/django-admin-interface/blob/main/LICENSE.txt)
 
 [![](https://results.pre-commit.ci/badge/github/fabiocaccamo/django-admin-interface/main.svg)](https://results.pre-commit.ci/latest/github/fabiocaccamo/django-admin-interface/main)
@@ -11,7 +11,8 @@
 [![](https://img.shields.io/codecov/c/gh/fabiocaccamo/django-admin-interface?logo=codecov)](https://codecov.io/gh/fabiocaccamo/django-admin-interface)
 [![](https://img.shields.io/codacy/grade/21cb657283c04e70b56fb935277a1ad1?logo=codacy)](https://www.codacy.com/app/fabiocaccamo/django-admin-interface)
 [![](https://img.shields.io/codeclimate/maintainability/fabiocaccamo/django-admin-interface?logo=code-climate)](https://codeclimate.com/github/fabiocaccamo/django-admin-interface/)
-[![](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![](https://img.shields.io/badge/code%20style-black-000000.svg?logo=python&logoColor=black)](https://github.com/psf/black)
+[![](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 # django-admin-interface
 django-admin-interface is a modern **responsive flat admin interface customizable by the admin itself**.
@@ -43,7 +44,7 @@ django-admin-interface is a modern **responsive flat admin interface customizabl
   - `django-streamfield`
   - `django-tabbed-admin`
   - `sorl-thumbnail`
-- Translated in many languages: `de`, `es`, `fa`, `fr`, `it`, `pl`, `pt_BR`, `tr`
+- Translated in many languages: `de`, `es`, `fa`, `fr`, `it`, `pl`, `pt_BR`, `ru`, `tr`
 
 ## Installation
 - Run `pip install django-admin-interface`
@@ -65,7 +66,8 @@ SILENCED_SYSTEM_CHECKS = ["security.W019"]
 - Run `python manage.py collectstatic --clear`
 - Restart your application server
 
-> **Warning** - if you want use modals instead of popup windows, ensure to add `X_FRAME_OPTIONS = "SAMEORIGIN"` setting.
+> [!WARNING]
+> if you want use modals instead of popup windows, ensure to add `X_FRAME_OPTIONS = "SAMEORIGIN"` setting.
 
 ### Optional features
 To make a fieldset start expanded with a `Hide` button to collapse, add the class `"expanded"` to its classes:
@@ -182,12 +184,41 @@ At the moment, this package has been translated into the following languages: `d
 If you do some changes to the project, remember to update translations, because if the translations files are not up-to-date, the `lint` step in the CI will fail:
 - Run `tox -e translations`
 
+## Caching
+
+This package uses caching to improve theme load time and overall performance.
+You can customise the app caching options using `settings.CACHES["admin_interface"]` setting, otherwise the `"default"` cache will be used:
+
+```python
+CACHES = {
+    # ...
+    "admin_interface": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "TIMEOUT": 60 * 5,
+    },
+    # ...
+}
+```
+
+> [!WARNING]
+> There is a [known compatibility issue](https://github.com/fabiocaccamo/django-admin-interface/issues/356) when using this package with `django-redis`, more specifically, using the `JSONSerializer` the following error is raised: `TypeError: Object of type Theme is not JSON serializable`, to mitigate this problem, simply use a specific cache for this app that does not use any `json` serializer.
+
 ## FAQ
 
 ### Custom `base-site.html`
 > I already have a custom `base_site.html`, how can I make it work?
 
 You can use [django-apptemplates](https://github.com/bittner/django-apptemplates), then add `{% extends "admin_interface:admin/base_site.html" %}` to your `base_site.html`
+
+### Custom `LocaleMiddleware` warning
+> I'm using a `django.middleware.locale.LocaleMiddleware` subclass, but I see an unnecessary warning for missing `django.middleware.locale.LocaleMiddleware`, what can I do?
+
+You can simply ignore the warning (this has been discussed [here](https://github.com/fabiocaccamo/django-admin-interface/issues/354))
+```python
+import warnings
+
+warnings.filterwarnings("ignore", module="admin_interface.templatetags.admin_interface_tags")
+```
 
 ### Language Chooser not showing
 > I have enabled the **Language Chooser**, but it is not visible in the admin, what should I do?
@@ -220,6 +251,15 @@ urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
 ]
 urlpatterns += i18n_patterns(path("admin/", admin.site.urls))
+```
+
+### Open any url in modal window
+> I have an application with some cross-links in the admin and I would like to open them in modal windows instead of same/new window, how can I do?
+
+You just need to add `_popup=1` query-string parameter to the urls:
+```python
+url = reverse(f"admin:myapp_mymodel_change", args=[mymodel_instance.pk])
+url = f"{url}?_popup=1"
 ```
 
 ## Testing

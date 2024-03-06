@@ -22,118 +22,70 @@ class AdminInterfaceTemplateTagsTestCase(TestCase):
     def __render_template(self, string, context=None):
         return Template(string).render(Context(context or {}))
 
-    def test_get_admin_interface_languages(self):
+    def test_admin_interface_language_chooser(self):
         context = Context({"request": self.request_factory.get("/en/admin/")})
-        languages = templatetags.get_admin_interface_languages(context)
+        context = templatetags.admin_interface_language_chooser(context)
+        languages = context["LANGUAGES"]
         expected_languages = [
-            {
-                "code": "de",
-                "name": "Deutsch",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/de/admin/",
-            },
-            {
-                "code": "en",
-                "name": "English",
-                "default": True,
-                "active": True,
-                "activation_url": "/i18n/setlang/?next=/en/admin/",
-            },
-            {
-                "code": "es",
-                "name": "Español",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/es/admin/",
-            },
-            {
-                "code": "fa",
-                "name": "Farsi",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/fa/admin/",
-            },
-            {
-                "code": "fr",
-                "name": "Français",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/fr/admin/",
-            },
-            {
-                "code": "it",
-                "name": "Italiano",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/it/admin/",
-            },
-            {
-                "code": "pl",
-                "name": "Polski",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/pl/admin/",
-            },
-            {
-                "code": "pt-BR",
-                "name": "Português",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/pt-br/admin/",
-            },
-            {
-                "code": "ru",
-                "name": "Русский",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/ru/admin/",
-            },
-            {
-                "code": "tr",
-                "name": "Türk",
-                "default": False,
-                "active": False,
-                "activation_url": "/i18n/setlang/?next=/tr/admin/",
-            },
+            ("de", "Deutsch"),
+            ("en", "English"),
+            ("es", "Español"),
+            ("fa", "Farsi"),
+            ("fr", "Français"),
+            ("it", "Italiano"),
+            ("pl", "Polski"),
+            ("pt-BR", "Português"),
+            ("ru", "Русский"),
+            ("tr", "Türk"),
         ]
         self.assertEqual(len(languages), len(expected_languages))
         self.assertEqual(languages[0], expected_languages[0])
         self.assertEqual(languages[1], expected_languages[1])
+        self.assertEqual(context["next"], "/admin/")
 
     @override_settings(
         USE_I18N=False,
     )
-    def test_get_admin_interface_languages_with_i18n_disabled(self):
+    def test_admin_interface_language_chooser_with_i18n_disabled(self):
         context = Context({"request": self.request_factory.get("/en/admin/")})
-        languages = templatetags.get_admin_interface_languages(context)
-        self.assertEqual(languages, None)
+        tag_context = templatetags.admin_interface_language_chooser(context)
+        self.assertEqual(tag_context, None)
 
     @override_settings(
         ROOT_URLCONF="tests.urls_without_i18n_patterns",
     )
-    def test_get_admin_interface_languages_without_i18n_url_patterns(self):
+    def test_admin_interface_language_chooser_without_i18n_url_patterns(self):
         context = Context({"request": self.request_factory.get("/en/admin/")})
-        languages = templatetags.get_admin_interface_languages(context)
-        self.assertEqual(languages, None)
+        with self.assertWarnsMessage(UserWarning, "django.conf.urls.i18n"):
+            tag_context = templatetags.admin_interface_language_chooser(context)
+        self.assertEqual(tag_context, None)
+
+    @override_settings(
+        MIDDLEWARE=[],
+    )
+    def test_admin_interface_language_chooser_without_locale_middleware(self):
+        context = Context({"request": self.request_factory.get("/en/admin/")})
+        with self.assertWarnsMessage(UserWarning, "LocaleMiddleware"):
+            tag_context = templatetags.admin_interface_language_chooser(context)
+        self.assertEqual(tag_context, None)
 
     @override_settings(
         LANGUAGES=(("en", "English"),),
     )
-    def test_get_admin_interface_languages_without_multiple_languages(self):
+    def test_admin_interface_language_chooser_without_multiple_languages(self):
         context = Context({"request": self.request_factory.get("/en/admin/")})
-        languages = templatetags.get_admin_interface_languages(context)
-        self.assertEqual(languages, None)
+        tag_context = templatetags.admin_interface_language_chooser(context)
+        self.assertEqual(tag_context, None)
 
-    def test_get_admin_interface_languages_without_request(self):
+    def test_admin_interface_language_chooser_without_request(self):
         context = Context({})
-        languages = templatetags.get_admin_interface_languages(context)
-        self.assertEqual(languages, None)
+        tag_context = templatetags.admin_interface_language_chooser(context)
+        self.assertEqual(tag_context, None)
 
-    def test_get_admin_interface_languages_without_language_prefix_in_url(self):
+    def test_admin_interface_language_chooser_without_language_prefix_in_url(self):
         context = Context({"request": self.request_factory.get("/admin/")})
-        languages = templatetags.get_admin_interface_languages(context)
-        self.assertEqual(languages, None)
+        tag_context = templatetags.admin_interface_language_chooser(context)
+        self.assertEqual(tag_context["next"], "/admin/")
 
     def test_get_theme(self):
         Theme.objects.all().delete()
@@ -179,6 +131,10 @@ class AdminInterfaceTemplateTagsTestCase(TestCase):
             "admin/edit_inline/stacked.html"
         )
         self.assertEqual(headless_template, "admin/edit_inline/headerless_stacked.html")
+        headless_template = templatetags.get_admin_interface_inline_template(
+            "nesting/admin/inlines/tabular.html"
+        )
+        self.assertEqual(headless_template, "nesting/admin/inlines/tabular.html")
 
     def test_get_active_date_hierarchy_none(self):
         changelist = Mock()
@@ -207,80 +163,84 @@ class AdminInterfaceTemplateTagsTestCase(TestCase):
 
         self.assertEqual(date_field, "last_login")
 
-    def _add_changelist_methods(self, mock, params):
-        def get_query_string(**kwargs):
-            return ChangeList.get_query_string(mock, **kwargs)
+    def _get_changelist_mock(self, params=None):
+        class ChangelistMock(Mock):
+            def __init__(self, params=None, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                # django < 5.0
+                self.params = params or {}
+                # django >= 5.0
+                self.filter_params = params or {}
 
-        def get_filters_params(**kwargs):
-            return ChangeList.get_filters_params(mock, **kwargs)
+            def get_query_string(self, **kwargs):
+                return ChangeList.get_query_string(self, **kwargs)
 
-        mock.get_query_string = get_query_string
-        mock.get_filters_params = get_filters_params
-        mock.params = params
+            def get_filters_params(self, **kwargs):
+                return ChangeList.get_filters_params(self, **kwargs)
+
+        return ChangelistMock(params=params)
 
     def test_filter_removal_link(self):
-        changelist = Mock()
         params = {"shape": "pointy", "size": "small"}
-        self._add_changelist_methods(changelist, params)
+        changelist = self._get_changelist_mock(params)
         list_filter = Mock()
         list_filter.title = "Shape filter"
         choices = [{"display": "Round"}, {"display": "Pointy", "selected": True}]
         list_filter.choices.return_value = choices
         list_filter.expected_parameters.return_value = ("shape",)
 
-        ctx = templatetags.admin_interface_filter_removal_link(changelist, list_filter)
+        context = templatetags.admin_interface_filter_removal_link(
+            changelist, list_filter
+        )
 
-        self.assertEqual(ctx["removal_link"], "?size=small")
-        self.assertEqual(ctx["title"], "Shape filter")
-        self.assertEqual(ctx["selected_value"], "Pointy")
+        self.assertEqual(context["removal_link"], "?size=small")
+        self.assertEqual(context["title"], "Shape filter")
+        self.assertEqual(context["selected_value"], "Pointy")
 
     def test_filter_removal_link_no_display(self):
-        changelist = Mock()
         params = {"shape": "pointy", "size": "small"}
-        self._add_changelist_methods(changelist, params)
+        changelist = self._get_changelist_mock(params)
         list_filter = Mock()
         list_filter.title = "Shape filter"
         choices = [{"other": "Round"}, {"other": "Pointy", "selected": True}]
         list_filter.choices.return_value = choices
         list_filter.expected_parameters.return_value = ("shape",)
 
-        ctx = templatetags.admin_interface_filter_removal_link(changelist, list_filter)
+        context = templatetags.admin_interface_filter_removal_link(
+            changelist, list_filter
+        )
 
-        self.assertEqual(ctx["removal_link"], "?size=small")
-        self.assertEqual(ctx["title"], "Shape filter")
-        self.assertEqual(ctx["selected_value"], "...")
+        self.assertEqual(context["removal_link"], "?size=small")
+        self.assertEqual(context["title"], "Shape filter")
+        self.assertEqual(context["selected_value"], "...")
 
     def test_date_hierarchy_removal_link_year(self):
-        changelist = Mock()
         params = {"shape": "pointy", "last_login__year": 2022}
-        self._add_changelist_methods(changelist, params)
+        changelist = self._get_changelist_mock(params)
         changelist.model._meta.get_field.return_value.verbose_name = "last login"
 
-        ctx = templatetags.admin_interface_date_hierarchy_removal_link(
+        context = templatetags.admin_interface_date_hierarchy_removal_link(
             changelist, "last_login"
         )
 
-        self.assertEqual(ctx["removal_link"], "?shape=pointy")
-        self.assertEqual(ctx["date_label"], "last login")
-        self.assertEqual(ctx["date_value"], date(2022, 1, 1))
+        self.assertEqual(context["removal_link"], "?shape=pointy")
+        self.assertEqual(context["date_label"], "last login")
+        self.assertEqual(context["date_value"], date(2022, 1, 1))
 
     def test_date_hierarchy_removal_link_year_month(self):
-        changelist = Mock()
-        changelist.model._meta.get_field.return_value.verbose_name = "last login"
         params = {"last_login__year": 2022, "last_login__month": "11"}
-        self._add_changelist_methods(changelist, params)
+        changelist = self._get_changelist_mock(params)
+        changelist.model._meta.get_field.return_value.verbose_name = "last login"
 
-        ctx = templatetags.admin_interface_date_hierarchy_removal_link(
+        context = templatetags.admin_interface_date_hierarchy_removal_link(
             changelist, "last_login"
         )
 
-        self.assertEqual(ctx["removal_link"], "?")
-        self.assertEqual(ctx["date_label"], "last login")
-        self.assertEqual(ctx["date_value"], date(2022, 11, 1))
+        self.assertEqual(context["removal_link"], "?")
+        self.assertEqual(context["date_label"], "last login")
+        self.assertEqual(context["date_value"], date(2022, 11, 1))
 
     def test_date_hierarchy_removal_link_year_month_day(self):
-        changelist = Mock()
-        changelist.model._meta.get_field.return_value.verbose_name = "last login"
         params = {
             "last_login__year": 2022,
             "last_login__month": "11",
@@ -288,12 +248,13 @@ class AdminInterfaceTemplateTagsTestCase(TestCase):
             "shape": "round",
             "size": "small",
         }
-        self._add_changelist_methods(changelist, params)
+        changelist = self._get_changelist_mock(params)
+        changelist.model._meta.get_field.return_value.verbose_name = "last login"
 
-        ctx = templatetags.admin_interface_date_hierarchy_removal_link(
+        context = templatetags.admin_interface_date_hierarchy_removal_link(
             changelist, "last_login"
         )
 
-        self.assertEqual(ctx["removal_link"], "?shape=round&size=small")
-        self.assertEqual(ctx["date_label"], "last login")
-        self.assertEqual(ctx["date_value"], date(2022, 11, 30))
+        self.assertEqual(context["removal_link"], "?shape=round&size=small")
+        self.assertEqual(context["date_label"], "last login")
+        self.assertEqual(context["date_value"], date(2022, 11, 30))

@@ -10,7 +10,7 @@
 {% get_admin_interface_theme as theme %}
 {% get_admin_interface_nocache as version_md5_cache %}
 {% get_current_language as current_lang %}
-    <style type="text/css">
+    <style>
         :root .admin-interface {
             --admin-interface-title-color: {{ theme.title_color }};
             --admin-interface-logo-color: {{ theme.logo_color }};
@@ -79,47 +79,43 @@
         {% endif %}
         }
     </style>
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/admin-interface.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/admin-interface-fix.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/form-controls.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/language-chooser.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/list-filter-dropdown.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/rangefilter.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/admin-interface.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/changelist.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/change-form.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/fieldsets.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/file-upload.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/inlines.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/jquery.ui.tabs.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/language-chooser.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/list-filter.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/list-filter-dropdown.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/modules.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/nav-sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/paginator.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/object-tools.css' %}">
     {% if not theme.recent_actions_visible %}
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/recent-actions.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/recent-actions.css' %}">
     {% endif %}
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/related-modal.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/streamfield.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/jquery.ui.tabs.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/modeltranslation.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/sorl-thumbnail.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/ckeditor.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/tinymce.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/json-widget.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/import-export.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/rtl.css' %}">
-    <link rel="stylesheet" type="text/css"
-          href="{% static 'admin_interface/css/tabbed-changeform.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/sticky-form-controls.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/tabbed-changeform.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/widgets.css' %}">
+
+    <!-- third-party packages compatibility / style optimizations -->
+    <link rel="stylesheet" href="{% static 'admin_interface/css/third-party/ckeditor.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/third-party/import-export.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/third-party/json-widget.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/third-party/modeltranslation.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/third-party/rangefilter.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/third-party/sorl-thumbnail.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/third-party/streamfield.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_interface/css/third-party/tinymce.css' %}">
+    <!-- end third-party packages compatibility / style optimizations -->
 
 {% if current_lang == 'fa' %}
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v27.2.2/dist/font-face.css">
+<link rel="stylesheet"  href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v27.2.2/dist/font-face.css">
 {% endif %}
 
 {% endblock %}
@@ -130,8 +126,8 @@
 {% get_admin_interface_nocache as version_md5_cache %}
 {# https://github.com/elky/django-flat-responsive#important-note #}
 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<link rel="stylesheet" type="text/css" href="{% static 'admin/css/responsive.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'admin/css/responsive_rtl.css' %}">
+<link rel="stylesheet" href="{% static 'admin/css/responsive.css' %}">
+<link rel="stylesheet" href="{% static 'admin/css/responsive_rtl.css' %}">
 {% include "admin_interface/favicon.html" %}
 {% include "admin_interface/foldable-apps.html" %}
 {% include "admin_interface/related-modal.html" %}
@@ -144,13 +140,20 @@
 
 {% block bodyclass %}
 {% get_admin_interface_theme as theme %}
-flat-theme admin-interface
+admin-interface
 {% if theme.name %} {{ theme.name|slugify }}-theme {% endif %}
 {% if theme.foldable_apps %} foldable-apps {% endif %}
 {% if theme.form_submit_sticky %} sticky-submit {% endif %}
 {% if theme.form_pagination_sticky %} sticky-pagination {% endif %}
 {% if theme.list_filter_highlight %} list-filter-highlight {% endif %}
 {% if theme.list_filter_sticky %} list-filter-sticky {% endif %}
+
+{% admin_interface_use_changeform_tabs adminform inline_admin_formsets as admin_interface_use_changeform_tabs %}
+{% if admin_interface_use_changeform_tabs %}
+    {% if theme.show_fieldsets_as_tabs %} show-fieldsets-as-tabs {% endif %}
+    {% if theme.show_inlines_as_tabs %} show-inlines-as-tabs {% endif %}
+{% endif %}
+
 {% if theme.collapsible_stacked_inlines %} collapsible-stacked-inlines
     {% if theme.collapsible_stacked_inlines_collapsed %} collapsible-stacked-inlines-collapsed {% endif %}
 {% endif %}
@@ -186,7 +189,6 @@ flat-theme admin-interface
 {{ block.super }}
 {% get_admin_interface_theme as theme %}
 {% if theme.language_chooser_active %}
-    {% get_admin_interface_languages as languages %}
-    {% include "admin_interface/language_chooser.html" %}
+    {% admin_interface_language_chooser %}
 {% endif %}
 {% endblock %}

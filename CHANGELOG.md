@@ -4,6 +4,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.28.5](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.28.5) - 2024-01-30
+-   [css] Fix related widget height and buttons alignment when there is a multiline label.
+-   [css] Fix inputs height when there is a multiline label.
+
+## [0.28.4](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.28.4) - 2024-01-29
+-   [css] Fix header logo not displayed correctly.
+
+## [0.28.3](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.28.3) - 2024-01-08
+-   [css] Fix help text horizontal alignment when using `show-fieldsets-as-tabs` / `show-inlines-as-tabs` theme options. #317
+-   [css] Fix file-upload widget margin-left.
+-   [css] Fix related widget links add button position on `many-to-many` selector.
+-   [css] Fix related widget links margin from `select2` (`autocomplete_fields`).
+-   [css] Reduce paginator vertical padding.
+
+## [0.28.2](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.28.2) - 2024-01-08
+-   [css] Fix related widget icon alignment. #348 #350
+
+## [0.28.1](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.28.1) - 2023-12-28
+-   [python] Fix `TemplateDoesNotExist` when using `django-nested-admin` by returning custom template for other third-party packages. #341 (by [@markdrrr](https://github.com/markdrrr) in #342)
+-   [html] Display language chooser language name uppercase.
+-   [css] Move save buttons to right in change form.
+-   [css] Fix related widget links icons size and vertical alignment.
+-   [css] Fix admin `raw_id_fields` appearance.
+-   [css] Fix `autocomplete_fields` appearance.
+-   [ci] Bump requirements.
+
+### Contributors
+-   [@markdrrr](https://github.com/markdrrr)
+
+## [0.28.0](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.28.0) - 2023-12-21
+-   [html] Remove old `flat-theme` body class.
+-   [html] Remove `type="text/css"` and `type="text/javascript"` attributes.
+-   [css] Fix filter input fields collapsing on different layouts. #338
+-   [css] Fix paginator buttons height.
+-   [css] Fix `foldable-apps` +/- button vertical alignment.
+-   [css] Split `admin-interface-fix.css` CSS file into multiple files for easier debugging.
+-   [css] Rename `form-controls.css` to `sticky-form-controls.css`.
+-   [css] Move third-party compatibility CSS files to a `third-party` folder.
+-   [css] Move `related-modal.css` to related-modal plugin folder.
+-   [third-party] Update compatibility with `django-streamfield`.
+-   [ci] Replace `Black` and `isort` with `Ruff-format`.
+-   [ci] Bump `pre-commit` hooks.
+
+## [0.27.0](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.27.0) - 2023-12-05
+-   Add `Python 3.12` support.
+-   Add `Django 5.0` support.
+-   Fix broken language-chooser with `i18n_patterns(..., prefix_default_language=False)`. #327 (by [@julianwachholz](https://github.com/julianwachholz) in #328)
+-   Simplify language-chooser. #327 (by [@julianwachholz](https://github.com/julianwachholz) in #328)
+-   Speed-up test workflow.
+-   Bump requirements.
+-   Bump `pre-commit` hooks.
+
+### Contributors
+-   [@julianwachholz](https://github.com/julianwachholz)
+
 ## [0.26.1](https://github.com/fabiocaccamo/django-admin-interface/releases/tag/0.26.1) - 2023-09-05
 -   Fix logout and theme buttons style. #246
 -   Add Russian translation. (by [@rustzzdevel](https://github.com/rustzzdevel) in #295)

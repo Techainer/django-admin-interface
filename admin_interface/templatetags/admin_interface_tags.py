@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 import re
+import warnings
 
 from django import template
 from django.conf import settings
@@ -16,45 +17,43 @@ from admin_interface.models import Theme
 register = template.Library()
 
 
-@register.simple_tag(takes_context=True)
-def get_admin_interface_languages(context):
+@register.inclusion_tag("admin_interface/language_chooser.html", takes_context=True)
+def admin_interface_language_chooser(context):
     if not settings.USE_I18N:
         # i18n disabled
         return None
     if len(settings.LANGUAGES) < 2:
         # less than 2 languages
         return None
+    if "django.middleware.locale.LocaleMiddleware" not in settings.MIDDLEWARE:
+        warnings.warn(
+            "Language chooser requires 'django.middleware.locale.LocaleMiddleware' "
+            "in your MIDDLEWARE to work.",
+            stacklevel=1,
+        )
+        return None
     try:
-        set_language_url = reverse("set_language")
+        context["set_language_url"] = reverse("set_language")
     except NoReverseMatch:
-        # ImproperlyConfigured - must include i18n urls:
-        # urlpatterns += [url(r'^i18n/', include('django.conf.urls.i18n')),]
+        warnings.warn(
+            "Language chooser requires Django's `set_language` view: "
+            "`urlpatterns += [url(r'^i18n/', include('django.conf.urls.i18n'))]`.",
+            stacklevel=1,
+        )
         return None
     request = context.get("request", None)
     if not request:
         return None
+    context["LANGUAGES"] = settings.LANGUAGES
+
     full_path = request.get_full_path()
     admin_nolang_url = re.sub(r"^\/([\w]{2})([\-\_]{1}[\w]{2,4})?\/", "/", full_path)
-    if admin_nolang_url == full_path:
-        # ImproperlyConfigured - must include admin urls using i18n_patterns:
-        # from django.conf.urls.i18n import i18n_patterns
-        # urlpatterns += i18n_patterns(url(r'^admin/', admin.site.urls))
-        return None
-    langs_data = []
+
     default_lang_code = settings.LANGUAGE_CODE
     current_lang_code = translation.get_language() or default_lang_code
-    for language in settings.LANGUAGES:
-        lang_code = language[0].lower()
-        lang_name = language[1].title()
-        lang_data = {
-            "code": lang_code,
-            "name": lang_name,
-            "default": lang_code == default_lang_code,
-            "active": lang_code == current_lang_code,
-            "activation_url": f"{set_language_url}?next=/{lang_code}{admin_nolang_url}",
-        }
-        langs_data.append(lang_data)
-    return langs_data
+    context["LANGUAGE_CODE"] = current_lang_code
+    context["next"] = admin_nolang_url
+    return context
 
 
 @register.simple_tag()
@@ -75,6 +74,9 @@ def get_admin_interface_setting(setting):
 @register.simple_tag()
 def get_admin_interface_inline_template(template):
     template_path = template.split("/")
+    if template_path[0] != "admin":
+        # return costume inline template for other packages
+        return template
     template_path[-1] = "headerless_" + template_path[-1]
     return "/".join(template_path)
 
@@ -169,8 +171,12 @@ def admin_interface_date_hierarchy_removal_link(changelist, date_field_name):
 @register.simple_tag()
 def admin_interface_use_changeform_tabs(adminform, inline_forms):
     theme = get_admin_interface_theme()
-    has_fieldset_tabs = theme.show_fieldsets_as_tabs and len(adminform.fieldsets) > 1
-    has_inline_tabs = theme.show_inlines_as_tabs and len(inline_forms) > 0
+    has_fieldset_tabs = (
+        theme.show_fieldsets_as_tabs and adminform and len(adminform.fieldsets) > 1
+    )
+    has_inline_tabs = (
+        theme.show_inlines_as_tabs and inline_forms and len(inline_forms) > 0
+    )
     has_tabs = has_fieldset_tabs or has_inline_tabs
     return has_tabs
 
